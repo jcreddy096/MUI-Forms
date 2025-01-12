@@ -17,6 +17,8 @@ import {
   Rating,
   TextField,
   FormHelperText,
+  Box,
+  Typography
 } from '@mui/material';
 
 const schema = z.object({
@@ -42,27 +44,35 @@ const ProductPage: React.FC = () => {
   const navigate = useNavigate();
 
   const onSubmit = (data: IFormValues) => {
-    console.log(data);
+    const existingData = JSON.parse(localStorage.getItem("productData") || "[]");
+
+    const updatedData = [...existingData, data];
+
+    localStorage.setItem("productData", JSON.stringify(updatedData));
+
     alert("Data added successfully");
-    navigate("/Listitems");
+    navigate("/Listitems", { state: { productData: updatedData } });
   };
 
   return (
-    <div className="page-layout">
-      <h1>Please add your Product details</h1>
+    <Box sx={{ padding: 4 }}>
+      <Typography variant="h4" sx={{ marginBottom: 3 }}>
+        Please add your Product details
+      </Typography>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="form">
-        <div className="input-group">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Box sx={{ marginBottom: 2 }}>
           <TextField
             label="Title"
             {...register("title")}
             error={!!errors.title}
             helperText={errors.title ? errors.title.message : ""}
             fullWidth
+            sx={{ marginBottom: 2 }}
           />
-        </div> <br />
-      
-        <div className="input-group">
+        </Box>
+
+        <Box sx={{ marginBottom: 2 }}>
           <TextField
             label="Description"
             multiline
@@ -72,9 +82,9 @@ const ProductPage: React.FC = () => {
             helperText={errors.description ? errors.description.message : ""}
             fullWidth
           />
-        </div> <br />
+        </Box>
 
-        <div className="input-group">
+        <Box sx={{ marginBottom: 2 }}>
           <FormControl fullWidth>
             <InputLabel htmlFor="price">Price</InputLabel>
             <OutlinedInput
@@ -83,12 +93,13 @@ const ProductPage: React.FC = () => {
               type="number"
               {...register("price", { valueAsNumber: true })}
               error={!!errors.price}
+              sx={{ marginBottom: 2 }}
             />
             {errors.price && <FormHelperText error>{errors.price.message}</FormHelperText>}
           </FormControl>
-        </div> <br />
+        </Box>
 
-        <div className="input-group">
+        <Box sx={{ marginBottom: 2 }}>
           <FormControl fullWidth>
             <InputLabel htmlFor="mrp">MRP</InputLabel>
             <OutlinedInput
@@ -97,12 +108,13 @@ const ProductPage: React.FC = () => {
               type="number"
               {...register("mrp", { valueAsNumber: true })}
               error={!!errors.mrp}
+              sx={{ marginBottom: 2 }}
             />
             {errors.mrp && <FormHelperText error>{errors.mrp.message}</FormHelperText>}
           </FormControl>
-        </div> <br />
+        </Box>
 
-        <div className="input-group">
+        <Box sx={{ marginBottom: 2 }}>
           <FormLabel>Status</FormLabel>
           <Controller
             name="status"
@@ -115,23 +127,27 @@ const ProductPage: React.FC = () => {
             )}
           />
           {errors.status && <FormHelperText error>{errors.status.message}</FormHelperText>}
-        </div> <br />
+        </Box>
 
-        <div className="input-group"> 
-            <FormLabel>Rating</FormLabel> 
-            <Controller 
-            name="rating" 
-            control={control} 
+        <Box sx={{ marginBottom: 2 }}>
+          <FormLabel>Rating</FormLabel>
+          <Controller
+            name="rating"
+            control={control}
             render={({ field: { value, onChange, ...field } }) => (
-                 <Rating {...field} 
-                 value={value ?? 0} 
-                 onChange={(_, newValue) => onChange(newValue != null ? parseFloat(newValue.toString()) : 0)} 
-                 precision={0.5} /> )} 
-            /> 
-            {errors.rating && <FormHelperText error>{errors.rating.message}</FormHelperText>} 
-            </div> <br />
+              <Rating
+                {...field}
+                value={value ?? 0}
+                onChange={(_, newValue) => onChange(newValue != null ? parseFloat(newValue.toString()) : 0)}
+                precision={0.5}
+                sx={{ marginBottom: 2 }}
+              />
+            )}
+          />
+          {errors.rating && <FormHelperText error>{errors.rating.message}</FormHelperText>}
+        </Box>
 
-        <div className="input-group">
+        <Box sx={{ marginBottom: 2 }}>
           <TextField
             label="Review"
             multiline
@@ -141,16 +157,17 @@ const ProductPage: React.FC = () => {
             helperText={errors.review ? errors.review.message : ""}
             fullWidth
           />
-        </div> <br />
+        </Box>
 
-        <div className="input-group">
+        <Box sx={{ marginBottom: 2 }}>
           <Button type="submit" variant="contained" fullWidth>
             Add
           </Button>
-        </div>
+        </Box>
       </form>
-    </div>
+    </Box>
   );
 };
 
 export default ProductPage;
+

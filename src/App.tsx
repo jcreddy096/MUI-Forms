@@ -2,7 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import ProductPage from './Products/Product-Page';
-
+import ListItems from './Products/List-items';
+import ProductDetails from './Products/Product-Details';
 
 const App: React.FC = () => {
   return (
@@ -10,6 +11,9 @@ const App: React.FC = () => {
           <Routes>
             
             <Route path="/" element={<ProductPage />} />
+            <Route path="/Listitems" element={<ListItems />} />
+            <Route path="/Product-details" element={<ProductDetails />} />
+
     </Routes>
     </Router>
   )
