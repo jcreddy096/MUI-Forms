@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Card, CardContent, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Typography } from '@mui/material';
 
-interface Product {
+type Product = {
+  id: string;
   title: string;
   description: string;
   price: number;
@@ -17,30 +18,43 @@ const ListItems: React.FC = () => {
   const [productData, setProductData] = useState<Product[]>([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem("productData") || "[]");
-    setProductData(storedData);
-  }, []);
-
-  const handleDelete = (index: number) => {
-    const updatedData = productData.filter((_, i) => i !== index);
+ 
+  const handleDelete = (id: string) => {
+    const updatedData = productData.filter((product) => product.id  !== id);
     setProductData(updatedData);
     localStorage.setItem("productData", JSON.stringify(updatedData));
   };
 
   const handleNavigate = (product: Product) => {
-    navigate(`/product-details`, { state: { product } });
+    navigate(`/listitems/product-details/${product.id}`, {state: {product} });
   };
 
+
+  useEffect(() => {
+    
+    const storedData : Product[] = JSON.parse(localStorage.getItem("productData") || "[]");
+    setProductData(storedData);
+  }, []);
+
   return (
-    <div style={{ padding: '20px' }}>
+    <Box style={{ padding: '20px' }}>
+     
+     <Button 
+      variant="contained" 
+      color="primary" 
+      style={{ marginBottom: '20px' }} 
+      onClick={() => navigate("/")} 
+      > 
+      Back 
+      </Button>
+
       <h1>Product List</h1>
-      {productData.length === 0 ? (
+         {productData.length === 0 ? (
         <p>No products available. Please add some products.</p>
       ) : (
-        productData.map((product, index) => (
+        productData.map((product) => (
           <Card
-            key={index}
+            key={product.id}
             style={{
               marginBottom: '20px',
               cursor: 'pointer',
@@ -67,7 +81,7 @@ const ListItems: React.FC = () => {
               }}
               onClick={(e) => {
                 e.stopPropagation(); 
-                handleDelete(index);
+                handleDelete(product.id);
               }}
             >
               Delete
@@ -75,8 +89,11 @@ const ListItems: React.FC = () => {
           </Card>
         ))
       )}
-    </div>
+    </Box>
   );
 };
 
 export default ListItems;
+
+
+
