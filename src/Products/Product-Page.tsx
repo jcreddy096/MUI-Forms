@@ -92,10 +92,10 @@ const ProductPage = () => {
                 localStorage.setItem('brand', brand); 
               }}
             >
-              <MenuItem key ="Brand A" value="Brand A">Brand A</MenuItem>
-              <MenuItem value="Brand B">Brand B</MenuItem>
-              <MenuItem value="Brand C">Brand C</MenuItem>
-              <MenuItem value="Brand D">Brand D</MenuItem>
+              <MenuItem key ="Samsung" value="">Samsung</MenuItem>
+              <MenuItem value="Apple">Apple</MenuItem>
+              <MenuItem value="Xiomi">Xiomi</MenuItem>
+              <MenuItem value="Realme">Realme</MenuItem>
 
 
             </Select>
