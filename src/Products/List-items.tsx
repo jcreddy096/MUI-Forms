@@ -1,58 +1,66 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Button, Card, CardContent, Typography } from '@mui/material';
-
-type Product = {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  mrp: number;
-  status: string;
-  rating: number;
-  review: string;
-}
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Box, Button, Card, CardContent, Typography, TextField } from '@mui/material';
+import { IProduct } from './Schema';
 
 const ListItems: React.FC = () => {
-  const [productData, setProductData] = useState<Product[]>([]);
+  const [productData, setProductData] = useState<IProduct[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const navigate = useNavigate();
+  const location = useLocation();
 
- 
-  const handleDelete = (id: string) => {
-    const updatedData = productData.filter((product) => product.id  !== id);
-    setProductData(updatedData);
-    localStorage.setItem("productData", JSON.stringify(updatedData));
+  const handleDelete = (id: string | undefined) => {
+    if (id) {
+      const updatedData = productData.filter((product) => product.id !== id);
+      setProductData(updatedData);
+      localStorage.setItem("productData", JSON.stringify(updatedData));
+    }
   };
 
-  const handleNavigate = (product: Product) => {
-    navigate(`/listitems/product-details/${product.id}`, {state: {product} });
+  const handleNavigate = (product: IProduct) => {
+    navigate(`/listitems/product-details/${product.id}`, { state: { product } });
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredProducts = productData.filter((product) =>
+    product.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
-    
-    const storedData : Product[] = JSON.parse(localStorage.getItem("productData") || "[]");
+    const storedData: IProduct[] = JSON.parse(localStorage.getItem("productData") || "[]");
     setProductData(storedData);
-  }, []);
+  }, [location]);
 
   return (
     <Box style={{ padding: '20px' }}>
-     
-     <Button 
-      variant="contained" 
-      color="primary" 
-      style={{ marginBottom: '20px' }} 
-      onClick={() => navigate("/")} 
-      > 
-      Back 
+      <Button
+        variant="contained"
+        color="primary"
+        style={{ marginBottom: '20px' }}
+        onClick={() => navigate("/")}
+      >
+        Back
       </Button>
 
       <h1>Product List</h1>
-         {productData.length === 0 ? (
-        <p>No products available. Please add some products.</p>
+
+      <TextField
+        label="Search by Title"
+        variant="outlined"
+        fullWidth
+        value={searchQuery}
+        onChange={handleSearch}
+        style={{ marginBottom: '20px' }}
+      />
+
+      {filteredProducts.length === 0 ? (
+        <p>No products found matching your search.</p>
       ) : (
-        productData.map((product) => (
+        filteredProducts.map((product) => (
           <Card
             key={product.id}
             style={{
@@ -80,7 +88,7 @@ const ListItems: React.FC = () => {
                 right: '10px',
               }}
               onClick={(e) => {
-                e.stopPropagation(); 
+                e.stopPropagation();
                 handleDelete(product.id);
               }}
             >
@@ -94,6 +102,3 @@ const ListItems: React.FC = () => {
 };
 
 export default ListItems;
-
-
-

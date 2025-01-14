@@ -9,8 +9,12 @@ export const productSchema = z.object({
   status: z.string().min(1, { message: "Status is required" }),
   rating: z.number().min(0).max(5, { message: "Rating must be between 0 and 5" }),
   review: z.string().min(10, { message: "Review must be at least 10 characters" }),
+  brand: z.string().nonempty("Brand is required"),
 }).refine((data) => data.price < data.mrp, {
   message: "Price must be less than MRP",
   path: ["price"],
+
 });
- export default productSchema
+ export default productSchema;
+
+ export type IProduct = z.infer< typeof productSchema>

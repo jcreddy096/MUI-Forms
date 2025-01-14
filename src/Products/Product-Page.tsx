@@ -3,7 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate } from 'react-router-dom';
-import  {productSchema} from './Schema' ;
+import { productSchema } from './Schema';
 import {
   Button,
   FormControl,
@@ -18,13 +18,17 @@ import {
   TextField,
   FormHelperText,
   Box,
-  Typography
+  Typography,
+  Select,
+  MenuItem
 } from '@mui/material';
+import { useState } from 'react';
 
-
-type IFormValues = Omit< z.infer<typeof productSchema>, "id">;
+type IFormValues = Omit<z.infer<typeof productSchema>, 'id'>;
 
 const ProductPage = () => {
+  const [savedBrand, setSavedBrand] = useState<string>('');
+
   const { register, control, handleSubmit, formState: { errors } } = useForm<IFormValues>({
     resolver: zodResolver(productSchema),
   });
@@ -33,16 +37,16 @@ const ProductPage = () => {
 
   const onSubmit = (data: IFormValues) => {
     const existingData = JSON.parse(localStorage.getItem("productData") || "[]") || [];
-    const nextId = existingData.length +1;
-    const newProduct = {...data, id: nextId};
+    const nextId = existingData.length + 1;
+    const newProduct = { ...data, id: nextId, brand: savedBrand };
     const updatedData = [...existingData, newProduct];
 
     localStorage.setItem("productData", JSON.stringify(updatedData));
     
-
     alert("Data added successfully");
     navigate("/listitems", { state: { productData: updatedData } });
   };
+  
 
   return (
     <Box sx={{ padding: 4 }}>
@@ -72,6 +76,31 @@ const ProductPage = () => {
             helperText={errors.description ? errors.description.message : ""}
             fullWidth
           />
+        </Box>
+
+        <Box sx={{ marginBottom: 2 }}>
+          <FormControl fullWidth>
+            <InputLabel>Brand</InputLabel>
+            <Select
+              {...register('brand')}
+              value={savedBrand}
+              label="Brand"
+              error={!!errors.brand}
+              onChange={(e) => {
+                const brand = e.target.value;
+                setSavedBrand(brand);  
+                localStorage.setItem('brand', brand); 
+              }}
+            >
+              <MenuItem key ="Brand A" value="Brand A">Brand A</MenuItem>
+              <MenuItem value="Brand B">Brand B</MenuItem>
+              <MenuItem value="Brand C">Brand C</MenuItem>
+              <MenuItem value="Brand D">Brand D</MenuItem>
+
+
+            </Select>
+            {errors.brand && <FormHelperText error>{errors.brand.message}</FormHelperText>}
+          </FormControl>
         </Box>
 
         <Box sx={{ marginBottom: 2 }}>
@@ -161,4 +190,3 @@ const ProductPage = () => {
 };
 
 export default ProductPage;
-
