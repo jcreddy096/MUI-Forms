@@ -1,14 +1,20 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Box, Button, Card, CardContent, Typography, TextField } from '@mui/material';
+import { Box, Button, Card, CardContent, Typography, TextField, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 import { IProduct } from './Schema';
+import { useDebounce } from 'use-debounce';
+
 
 const ListItems: React.FC = () => {
   const [productData, setProductData] = useState<IProduct[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [inputValue, setInputValue] = React.useState("");
+  const[selectBrand, setSelectBrand] = useState<string[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
+  
+  const [debouncedValue] = useDebounce(inputValue,500);
 
   const handleDelete = (id: string | undefined) => {
     if (id) {
@@ -18,22 +24,52 @@ const ListItems: React.FC = () => {
     }
   };
 
-  const handleNavigate = (product: IProduct) => {
-    navigate(`/listitems/product-details/${product.id}`, { state: { product } });
+  const handleNavigate = (id: string | undefined) => {
+    navigate(`/listitems/product-details/${id}`);
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+  const handleBrandChange = (e: React.ChangeEvent<HTMLInputElement>) => { 
+    const brand = e.target.name; 
+    setSelectBrand(prevSelectedBrands => 
+      prevSelectedBrands.includes(brand) 
+      ? prevSelectedBrands.filter(b => b !== brand) 
+      : [...prevSelectedBrands, brand] 
+    ); 
   };
+
+  const brands = Array.from(new Set(productData.map(product => product.brand)));
 
   const filteredProducts = productData.filter((product) =>
     product.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  )
+    .filter((product) =>
+       selectBrand.length === 0 || selectBrand.includes(product.brand)
+       );
+
+  const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>) =>{
+    setInputValue(e.target.value);
+  }
+
+   
+  useEffect(() => {
+    if (debouncedValue) {
+      //console.log('Debounced search query:', debouncedValue);
+      setSearchQuery(debouncedValue);
+      
+      navigate(`?search=${debouncedValue}`);
+    }
+  },[debouncedValue, navigate]);
+
 
   useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const query = params.get("search") || "";
+    setSearchQuery(query);
+    setInputValue(query);
+
     const storedData: IProduct[] = JSON.parse(localStorage.getItem("productData") || "[]");
     setProductData(storedData);
-  }, [location]);
+  }, [location.search]);
 
   return (
     <Box style={{ padding: '20px' }}>
@@ -52,10 +88,26 @@ const ListItems: React.FC = () => {
         label="Search by Title"
         variant="outlined"
         fullWidth
-        value={searchQuery}
-        onChange={handleSearch}
+        value={inputValue}
+        onChange={handleInputChange}
         style={{ marginBottom: '20px' }}
       />
+
+      <FormGroup>
+         {brands.map((brand) => (
+             <FormControlLabel 
+                key={brand}
+                control={<Checkbox 
+                checked={selectBrand.includes(brand)}
+                onChange={handleBrandChange}
+                name={brand}
+  
+              />
+             } 
+            label={brand} 
+          />
+        ))}
+      </FormGroup>
 
       {filteredProducts.length === 0 ? (
         <p>No products found matching your search.</p>
@@ -63,12 +115,12 @@ const ListItems: React.FC = () => {
         filteredProducts.map((product) => (
           <Card
             key={product.id}
-            style={{
+            sx={{
               marginBottom: '20px',
               cursor: 'pointer',
               position: 'relative',
             }}
-            onClick={() => handleNavigate(product)}
+            onClick={() => handleNavigate(product.id)}
           >
             <CardContent>
               <Typography variant="h6">{product.title}</Typography>
@@ -82,7 +134,7 @@ const ListItems: React.FC = () => {
             <Button
               variant="outlined"
               color="error"
-              style={{
+              sx={{
                 position: 'absolute',
                 top: '10px',
                 right: '10px',

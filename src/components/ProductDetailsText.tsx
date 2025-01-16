@@ -1,9 +1,12 @@
-import React from 'react';
+
 import { Typography } from '@mui/material';
-import { IProduct } from './Schema';
+import { IProduct } from '../Schema/Schema';
 
+type ProductDetailsTextProps = {
+  product: IProduct;
+}
 
-const ProductDetailsText: React.FC<{ product: IProduct }> = ({ product }) => {
+const ProductDetailsText =  ({ product }:ProductDetailsTextProps) => {
   return (
     <Typography>
       Description: {product.description} 

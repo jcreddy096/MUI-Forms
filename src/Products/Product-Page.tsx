@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate } from 'react-router-dom';
 import { productSchema } from './Schema';
+import {v4 as uuidv4} from 'uuid';
 import {
   Button,
   FormControl,
@@ -37,8 +38,7 @@ const ProductPage = () => {
 
   const onSubmit = (data: IFormValues) => {
     const existingData = JSON.parse(localStorage.getItem("productData") || "[]") || [];
-    const nextId = existingData.length + 1;
-    const newProduct = { ...data, id: nextId, brand: savedBrand };
+    const newProduct = { ...data, id: uuidv4(), brand: savedBrand };
     const updatedData = [...existingData, newProduct];
 
     localStorage.setItem("productData", JSON.stringify(updatedData));
@@ -92,7 +92,7 @@ const ProductPage = () => {
                 localStorage.setItem('brand', brand); 
               }}
             >
-              <MenuItem key ="Samsung" value="">Samsung</MenuItem>
+              <MenuItem key ="Select-Brand" value="">Select the brand</MenuItem>
               <MenuItem value="Apple">Apple</MenuItem>
               <MenuItem value="Xiomi">Xiomi</MenuItem>
               <MenuItem value="Realme">Realme</MenuItem>

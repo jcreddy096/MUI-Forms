@@ -1,17 +1,29 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Button, Card, CardContent, Typography } from '@mui/material';
 import ProductDetailsText from './ProductDetailsText';
+import { IProduct } from './Schema';
+
 
 const ProductDetails: React.FC = () => {
-  const location = useLocation();
+  const {id} = useParams<{id: string}>();
   const navigate = useNavigate();
-  const product = location.state?.product;
+  const [product, setProduct] = useState<IProduct | null>(null)
+  
+  
+  useEffect(() => {
+      const storedData: IProduct[] = JSON.parse(localStorage.getItem("productData") || "[]");
+      const foundProduct = storedData.find((product) => {
+      return product.id === id;});
+      setProduct(foundProduct || null);
+    }, [id]);
 
+    
 
-  if (!product) {
-    return <p>Product not found.</p>;
-  }
+    if (!product) {
+      return <p>Product not found.</p>;
+    }
+  
 
   return (
     <Box style={{ padding: '20px' }}>
@@ -30,6 +42,7 @@ const ProductDetails: React.FC = () => {
       <CardContent>
         <Typography variant="h4">{product.title}</Typography>
         <ProductDetailsText product={product} />
+        
       </CardContent>
 
     </Card>
