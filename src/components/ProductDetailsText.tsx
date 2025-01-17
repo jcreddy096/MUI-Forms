@@ -1,4 +1,3 @@
-
 import { Typography } from '@mui/material';
 import { IProduct } from '../Schema/Schema';
 
@@ -6,7 +5,7 @@ type ProductDetailsTextProps = {
   product: IProduct;
 }
 
-const ProductDetailsText =  ({ product }:ProductDetailsTextProps) => {
+const ProductDetailsText: React.FC<ProductDetailsTextProps> = ({ product }) => {
   return (
     <Typography>
       Description: {product.description} 

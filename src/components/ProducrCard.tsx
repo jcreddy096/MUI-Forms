@@ -1,4 +1,3 @@
-
 import { Card, CardContent, Button, Typography } from '@mui/material';
 import { IProduct } from '../Schema/Schema';
 
@@ -8,7 +7,7 @@ type ProductCardProps = {
   onNavigate: (id: string | undefined) => void;
 }
 
-const ProductCard = ({ product, onDelete, onNavigate }:ProductCardProps) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete, onNavigate }) => {
   return (
     <Card sx={{ marginBottom: '20px', cursor: 'pointer', position: 'relative' }} onClick={() => onNavigate(product.id)}>
       <CardContent>

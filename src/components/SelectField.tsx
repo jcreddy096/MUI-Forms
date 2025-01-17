@@ -1,4 +1,3 @@
-
 import { Select, MenuItem, InputLabel, FormControl, SelectChangeEvent, FormHelperText } from '@mui/material';
 
 type SelectFieldProps = {
@@ -10,7 +9,7 @@ type SelectFieldProps = {
   helperText?: string; 
 }
 
-const SelectField =({ label, value, options, onChange, error, helperText }:SelectFieldProps ) => {
+const SelectField: React.FC<SelectFieldProps> = ({ label, value, options, onChange, error, helperText }) => {
   return (
     <FormControl fullWidth variant="outlined" error={error}> 
       <InputLabel>{label}</InputLabel>

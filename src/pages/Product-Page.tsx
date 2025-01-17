@@ -1,72 +1,172 @@
-import React, { useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
-import InputField from '../components/InputField';
-import SelectField from '../components/SelectField';
-import { SelectChangeEvent } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Button, Typography, FormControl, InputLabel, Select, MenuItem, FormHelperText, OutlinedInput, InputAdornment, RadioGroup, Radio, Rating, FormLabel, TextField, FormControlLabel } from '@mui/material';
+import { useForm, Controller } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { IProduct, productSchema } from '../Schema/Schema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const ProductPage = () => {
-  const [productData, setProductData] = useState({
-    title: '',
-    description: '',
-    status: '',
+const ProductPage: React.FC = () => {
+  const [productData, setProductData] = useState<IProduct[]>([]);
+  const [savedBrand, setSavedBrand] = useState<string>('');
+  const navigate = useNavigate();
+  
+  const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<IProduct>({
+    resolver: zodResolver(productSchema),
   });
 
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setProductData((prev) => ({ ...prev, [name]: value }));
+  
+  const onSubmit = (data: IProduct) => {
+    const newProduct = { ...data, id: crypto.randomUUID() };
+    const updatedProductData = [...productData, newProduct];
+    setProductData(updatedProductData);
+    localStorage.setItem("productData", JSON.stringify(updatedProductData));
+    toast.success("Product added successfully!");
+    navigate("/listitems"); 
   };
 
-  const handleSelectChange = (e: SelectChangeEvent<string>) => {  
-    const { value } = e.target;
-    setProductData((prev) => ({ ...prev, status: value }));
-  };
 
-  const handleSubmit = () => {
-    if (!productData.title || !productData.description || !productData.status) {
-      setErrors({
-        title: 'Title is required',
-        description: 'Description is required',
-        status: 'Status is required',
-      });
-    } else {
-      console.log('Product Data Submitted:', productData);
+  useEffect(() => {
+    const storedBrand = localStorage.getItem('brand');
+    if (storedBrand) {
+      setSavedBrand(storedBrand);
+      setValue('brand', storedBrand);
     }
-  };
+
+    const storedData: IProduct[] = JSON.parse(localStorage.getItem("productData") || "[]");
+    setProductData(storedData);
+  }, [setValue]);
+
 
   return (
-    <Box sx={{ padding: '20px' }}>
-      <Typography variant="h4">Add Product</Typography>
+    <Box sx={{ padding: 4 }}>
+      <Typography variant="h2" sx={{ marginBottom: 3 }}>Add Product</Typography>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Box sx={{ marginBottom: 2 }}>
+          <TextField
+            label="Title"
+            {...register("title")}
+            error={!!errors.title}
+            helperText={errors.title ? errors.title.message : ""}
+            fullWidth
+          />
+        </Box>
 
-      <InputField
-        label="Title"
-        value={productData.title}
-        onChange={handleChange}
-        name="title"
-        error={Boolean(errors.title)}
-        helperText={errors.title} variant={'outlined'}      />
+        <Box sx={{ marginBottom: 2 }}>
+          <TextField
+            label="Description"
+            multiline
+            rows={2}
+            {...register("description")}
+            error={!!errors.description}
+            helperText={errors.description ? errors.description.message : ""}
+            fullWidth
+          />
+        </Box>
 
-      <InputField
-        label="Description"
-        value={productData.description}
-        onChange={handleChange}
-        name="description"
-        error={Boolean(errors.description)}
-        helperText={errors.description} variant={'outlined'}      />
+        <Box sx={{ marginBottom: 2 }}>
+          <FormControl fullWidth>
+            <InputLabel>Brand</InputLabel>
+            <Select
+              {...register('brand')}
+              value={savedBrand}
+              label="Brand"
+              error={!!errors.brand}
+              onChange={(e) => {
+                const brand = e.target.value;
+                setSavedBrand(brand);  
+                localStorage.setItem('brand', brand); 
+              }}
+            >
+              <MenuItem value="">Select the brand</MenuItem>
+              <MenuItem value="Apple">Apple</MenuItem>
+              <MenuItem value="Xiomi">Xiomi</MenuItem>
+              <MenuItem value="Realme">Realme</MenuItem>
+            </Select>
+            {errors.brand && <FormHelperText error>{errors.brand.message}</FormHelperText>}
+          </FormControl>
+        </Box>
 
-      <SelectField
-        label="Status"
-        value={productData.status}
-        options={['Available', 'Out of Stock']}
-        onChange={handleSelectChange}  
-        error={Boolean(errors.status)}
-        helperText={errors.status}
-      />
+        <Box sx={{ marginBottom: 2 }}>
+          <FormControl fullWidth>
+            <InputLabel htmlFor="price">Price</InputLabel>
+            <OutlinedInput
+              id="price"
+              startAdornment={<InputAdornment position="start">₹</InputAdornment>}
+              type="number"
+              {...register("price", { valueAsNumber: true })}
+              error={!!errors.price}
+            />
+            {errors.price && <FormHelperText error>{errors.price.message}</FormHelperText>}
+          </FormControl>
+        </Box>
 
-      <Button variant="contained" color="primary" onClick={handleSubmit}>
-        Submit
-      </Button>
+        <Box sx={{ marginBottom: 2 }}>
+          <FormControl fullWidth>
+            <InputLabel htmlFor="mrp">MRP</InputLabel>
+            <OutlinedInput
+              id="mrp"
+              startAdornment={<InputAdornment position="start">₹</InputAdornment>}
+              type="number"
+              {...register("mrp", { valueAsNumber: true })}
+              error={!!errors.mrp}
+            />
+            {errors.mrp && <FormHelperText error>{errors.mrp.message}</FormHelperText>}
+          </FormControl>
+        </Box>
+
+        <Box sx={{ marginBottom: 2 }}>
+          <FormLabel>Status</FormLabel>
+          <Controller
+            name="status"
+            control={control}
+            defaultValue="active"
+            render={({ field }) => (
+              <RadioGroup row {...field}>
+                <FormControlLabel value="active" control={<Radio />} label="Active" />
+                <FormControlLabel value="inactive" control={<Radio />} label="Inactive" />
+              </RadioGroup>
+            )}
+          />
+          {errors.status && <FormHelperText error>{errors.status.message}</FormHelperText>}
+        </Box>
+
+        <Box sx={{ marginBottom: 2 }}>
+          <FormLabel>Rating</FormLabel>
+          <Controller
+            name="rating"
+            control={control}
+            render={({ field: { value, onChange, ...field } }) => (
+              <Rating
+                {...field}
+                value={value ?? 0}
+                onChange={(_, newValue) => onChange(newValue != null ? parseFloat(newValue.toString()) : 0)}
+                precision={0.5}
+              />
+            )}
+          />
+          {errors.rating && <FormHelperText error>{errors.rating.message}</FormHelperText>}
+        </Box>
+
+        <Box sx={{ marginBottom: 2 }}>
+          <TextField
+            label="Review"
+            multiline
+            rows={2}
+            {...register("review")}
+            error={!!errors.review}
+            helperText={errors.review ? errors.review.message : ""}
+            fullWidth
+          />
+        </Box>
+
+        <Box sx={{ marginBottom: 2 }}>
+          <Button type="submit" variant="contained" fullWidth>
+            Add
+          </Button>
+        </Box>
+      </form>
     </Box>
   );
 };

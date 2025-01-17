@@ -1,12 +1,11 @@
-
 import { TextField } from '@mui/material';
 
-type SearchBarProps =  {
+type SearchBarProps = {
   inputValue: string;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
+};
 
-const SearchBar = ({ inputValue, handleInputChange }:SearchBarProps)  => {
+const SearchBar: React.FC<SearchBarProps> = ({ inputValue, handleInputChange }) => {
   return (
     <TextField
       label="Search by Title"

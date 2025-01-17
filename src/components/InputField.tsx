@@ -1,4 +1,3 @@
-
 import { TextField, OutlinedTextFieldProps } from '@mui/material';
 
 type InputFieldProps = OutlinedTextFieldProps & {  
@@ -7,7 +6,7 @@ type InputFieldProps = OutlinedTextFieldProps & {
   helperText: string;
 }
 
-const InputField = ({ label, error, helperText, value, ...props }: InputFieldProps) => {
+const InputField: React.FC<InputFieldProps> = ({ label, error, helperText, value, ...props }) => {
   return (
     <TextField
       {...props}
