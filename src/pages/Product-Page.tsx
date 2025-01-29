@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useEffect, useState } from 'react';
 import { Box, Button, Typography, FormControl, InputLabel, Select, MenuItem, FormHelperText, OutlinedInput, InputAdornment, RadioGroup, Radio, Rating, FormLabel, TextField, FormControlLabel } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -6,38 +6,63 @@ import { IProduct, productSchema } from '../Schema/Schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {useProductStore} from  '../store/ProductStore';
 
-const ProductPage: React.FC = () => {
-  const [productData, setProductData] = useState<IProduct[]>([]);
-  const [savedBrand, setSavedBrand] = useState<string>('');
+const ProductPage = () => {
+  // const [productData, setProductData] = useState<IProduct[]>([]);
+  // const [savedBrand, setSavedBrand] = useState<string>('');
   const navigate = useNavigate();
-  
+
+  const { formData, setFormData, resetForm} = useProductStore();
+  const [savedBrand, setSavedBrand] = useState<string>(formData.brand);
+
   const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<IProduct>({
     resolver: zodResolver(productSchema),
   });
 
   
+  // const onSubmit = (data: IProduct) => {
+  //   const newProduct = { ...data, id: crypto.randomUUID() };
+  //   const updatedProductData = [...productData, newProduct];
+  //   setProductData(updatedProductData);
+  //   localStorage.setItem("productData", JSON.stringify(updatedProductData));
+  //   toast.success("Product added successfully!");
+  //   navigate("/list-items"); 
+  // };
+
   const onSubmit = (data: IProduct) => {
     const newProduct = { ...data, id: crypto.randomUUID() };
-    const updatedProductData = [...productData, newProduct];
-    setProductData(updatedProductData);
-    localStorage.setItem("productData", JSON.stringify(updatedProductData));
+
+    const storedData: IProduct[] = JSON.parse(localStorage.getItem("productData") || "[]");
+    storedData.push(newProduct);
+    localStorage.setItem("productData", JSON.stringify(storedData));
+
+    setFormData(newProduct)
+    resetForm();
     toast.success("Product added successfully!");
-    navigate("/listitems"); 
-  };
+    navigate("/list-items");
+
+  }
+
+
+  // useEffect(() => {
+  //   const storedBrand = localStorage.getItem('brand');
+  //   if (storedBrand) {
+  //     setSavedBrand(storedBrand);
+  //     setValue('brand', storedBrand);
+  //   }
+
+  //   const storedData: IProduct[] = JSON.parse(localStorage.getItem("productData") || "[]");
+  //   setProductData(storedData);
+  // }, [setValue]);
 
 
   useEffect(() => {
-    const storedBrand = localStorage.getItem('brand');
-    if (storedBrand) {
-      setSavedBrand(storedBrand);
-      setValue('brand', storedBrand);
-    }
-
-    const storedData: IProduct[] = JSON.parse(localStorage.getItem("productData") || "[]");
-    setProductData(storedData);
-  }, [setValue]);
-
+    Object.keys(formData).forEach(key => {
+      setValue(key as keyof IProduct, formData[key as keyof IProduct]);
+    });
+  },[formData,setValue]);
+  
 
   return (
     <Box sx={{ padding: 4 }}>

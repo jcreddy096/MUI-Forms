@@ -25,7 +25,7 @@ const ListItems: React.FC = () => {
   };
 
   const handleNavigate = (id: string | undefined) => {
-    navigate(`/listitems/product-details/${id}`);
+    navigate(`/list-items/product-details/${id}`);
   };
 
   const handleBrandChange = (e: React.ChangeEvent<HTMLInputElement>) => { 

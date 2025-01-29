@@ -9,7 +9,7 @@ type SelectFieldProps = {
   helperText?: string; 
 }
 
-const SelectField: React.FC<SelectFieldProps> = ({ label, value, options, onChange, error, helperText }) => {
+const SelectField = ({ label, value, options, onChange, error, helperText }: SelectFieldProps ) => {
   return (
     <FormControl fullWidth variant="outlined" error={error}> 
       <InputLabel>{label}</InputLabel>

@@ -5,7 +5,7 @@ type SearchBarProps = {
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-const SearchBar: React.FC<SearchBarProps> = ({ inputValue, handleInputChange }) => {
+const SearchBar = ({ inputValue, handleInputChange }: SearchBarProps ) => {
   return (
     <TextField
       label="Search by Title"

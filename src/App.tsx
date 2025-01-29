@@ -44,8 +44,8 @@ const App: React.FC = () => {
         <Routes>
 
           <Route path="/" element={<ProductPage />} />
-          <Route path="/listitems" element={<ListItems />} />
-          <Route path="/listitems/product-details/:id" element={<ProductDetails />} />
+          <Route path="/list-items" element={<ListItems />} />
+          <Route path="/list-items/product-details/:id" element={<ProductDetails />} />
           
         </Routes>
         <Toaster position='top-right' />

@@ -7,7 +7,7 @@ type ProductCardProps = {
   onNavigate: (id: string | undefined) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete, onNavigate }) => {
+const ProductCard = ({ product, onDelete, onNavigate }:ProductCardProps) => {
   return (
     <Card sx={{ marginBottom: '20px', cursor: 'pointer', position: 'relative' }} onClick={() => onNavigate(product.id)}>
       <CardContent>

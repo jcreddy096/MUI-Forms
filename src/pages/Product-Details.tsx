@@ -17,7 +17,14 @@ const ProductDetails = () => {
   }, [id]);
 
   if (!product) {
-    return <p>Product not found.</p>;
+    return (
+      <Box style={{ padding: '20px' }}>
+        <Button variant="contained" color="primary" style={{ marginBottom: '20px' }} onClick={() => navigate(-1)}>
+          Back
+        </Button>
+        <Typography variant="h4">Product not found</Typography>
+        </Box>
+      );
   }
 
   return (

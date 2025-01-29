@@ -7,7 +7,7 @@ import { useDebounce } from 'use-debounce';
 import ProductCard from '../components/ProducrCard';
 import SearchBar from '../components/SearchBar';
 
-const ListItems: React.FC = () => {
+const ListItems = () => {
   const [productData, setProductData] = useState<IProduct[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [inputValue, setInputValue] = useState<string>("");
@@ -35,7 +35,7 @@ const ListItems: React.FC = () => {
 
   useEffect(() => {
     const params = new URLSearchParams();
-    //console.log(debouncedValue)
+    console.log(debouncedValue)
     if (debouncedValue) {
       params.set("search", debouncedValue);
     }
@@ -57,7 +57,7 @@ const ListItems: React.FC = () => {
   };
 
   const handleNavigate = (id: string | undefined) => {
-    navigate(`/listitems/product-details/${id}`);
+    navigate(`/list-items/product-details/${id}`);
   };
 
   const handleBrandChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,15 +107,16 @@ const ListItems: React.FC = () => {
       <SearchBar inputValue={inputValue} handleInputChange={handleInputChange} />
 
       <FormGroup>
-        {brands.map((brand) => (
-          <FormControlLabel
-            key={brand}
-            control={
-              <Checkbox checked={selectBrand.includes(brand)} onChange={handleBrandChange} name={brand} />
-            }
-            label={brand}
-          />
-        ))}
+      {brands.map((brand) => (
+  <FormControlLabel
+    key={brand}
+    control={
+      <Checkbox checked={selectBrand.includes(brand)} onChange={handleBrandChange} name={brand} />
+    }
+    label={brand}
+  />
+))}
+
       </FormGroup>
 
       <Box sx={{ marginBottom: 2, display: 'flex', gap: 5}}>

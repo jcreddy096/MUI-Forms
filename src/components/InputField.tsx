@@ -6,7 +6,7 @@ type InputFieldProps = OutlinedTextFieldProps & {
   helperText: string;
 }
 
-const InputField: React.FC<InputFieldProps> = ({ label, error, helperText, value, ...props }) => {
+const InputField = ({ label, error, helperText, value, ...props }: InputFieldProps) => {
   return (
     <TextField
       {...props}

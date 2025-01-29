@@ -5,7 +5,7 @@ type ProductDetailsTextProps = {
   product: IProduct;
 }
 
-const ProductDetailsText: React.FC<ProductDetailsTextProps> = ({ product }) => {
+const ProductDetailsText = ({ product }: ProductDetailsTextProps) => {
   return (
     <Typography>
       Description: {product.description} 

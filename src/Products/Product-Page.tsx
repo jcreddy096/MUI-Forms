@@ -44,7 +44,7 @@ const ProductPage = () => {
     localStorage.setItem("productData", JSON.stringify(updatedData));
     
     alert("Data added successfully");
-    navigate("/listitems", { state: { productData: updatedData } });
+    navigate("/list-items", { state: { productData: updatedData } });
   };
   
 
